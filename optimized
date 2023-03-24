@@ -1,0 +1,35 @@
+#optimized code
+import random
+from typing import List
+
+def read_text_file(file_path: str) -> List[str]:
+    with open(file_path, "r") as f:
+        return f.read().splitlines()
+
+def find_matches(test_list: List[str], guess_list: List[str]) -> List[List[int, str]]:
+    correct_letters_index = []
+    correct_letters_match = []
+    wrong_letters = []
+    for i, letter in enumerate(test_list):
+        if letter == guess_list[i]:
+            correct_letters_index.append(i)
+            correct_letters_match.append(True)
+        elif letter in guess_list:
+            correct_letters_index.append(6)
+            correct_letters_match.append(False)
+        else:
+            wrong_letters.append(letter)
+    return [[index, letter] for index, letter in zip(correct_letters_index, correct_letters_match)]
+
+def remove_wrong_letters(split_words: List[List[str]], correct_letters: List[List[int, str]]) -> List[List[str]]:
+    return [word for word in split_words if all((x[1] == word[x[0]] if x[0] != 6 else x[1] not in word) for x in correct_letters)]
+
+def optimize_wordle_bank(wordle_bank_file: str, answer: str, first_guess: str) -> str:
+    split_words = [list(word) for word in read_text_file(wordle_bank_file)]
+    test_list = list(answer)
+    guess_list = list(first_guess)
+
+    while guess_list != test_list:
+        correct_letters = find_matches(test_list, guess_list)
+        split_words = remove_wrong_letters(split_words, correct_letters)
+        guess_list = random
